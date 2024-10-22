@@ -2,44 +2,117 @@
 # Maintainer: Daniel M. Capella <polyzen@archlinux.org>
 # Contributor: Hugo Osvaldo Barrera <hugo@barrera.io>
 
-_name=setuptools_scm
-pkgname=python-setuptools-scm
-pkgver=8.0.4
+_git=false
+_pkg=setuptools_scm
+_Pkg=setuptools-scm
+_py="python"
+_pyver="$( \
+  "${_py}" \
+    -V | \
+    awk \
+      '{print $2}')"
+_pymajver="${_pyver%.*}"
+pkgname="${_py}-${_pkg}"
+pkgver=8.1.0
 pkgrel=1
 pkgdesc="Handles managing your python package versions in scm metadata"
-arch=('any')
-url="https://github.com/pypa/setuptools_scm"
-license=('MIT')
-depends=('python-packaging' 'python-setuptools' 'python-typing_extensions')
-makedepends=(
-  'git'
-  'python-build'
-  'python-installer'
-  'python-wheel'
+arch=(
+  'any'
 )
-checkdepends=('mercurial' 'python-pip' 'python-pytest' 'python-rich')
-source=("git+$url.git#tag=v$pkgver")
-b2sums=('SKIP')
+_http="https://github.com"
+_ns='pypa'
+url="${_http}/${_ns}/${_pkg}"
+license=(
+  'MIT'
+)
+depends=(
+  "${_py}>=${_pymajver}"
+  "${_py}-packaging"
+  "${_py}-setuptools"
+  "${_py}-typing_extensions"
+)
+makedepends=(
+  "${_py}-build"
+  "${_py}-installer"
+  "${_py}-wheel"
+)
+[[ "${_git}" == true ]] && \
+  makedepends+=(
+    'git'
+  )
+
+checkdepends=(
+  'mercurial'
+  "${_py}-pip"
+  "${_py}-pytest"
+  "${_py}-rich"
+)
+if [[ "${_git}" == "true" ]]; then
+  _source="${_pkg}-${pkgver}::git+${url}#tag=${pkgver}?signed"
+  _sum='SKIP'
+else
+  _source="${_pkg}-${pkgver}.tar.gz::${url}/archive/refs/tags/v${pkgver}.tar.gz"
+  _sum="ec9b751aa65db429a22bfae64a66e3419afe092c88801104f04e4dfdc76c9de255262006b33d4f4af29790b7e0dc5f335b1e551bf35f5adf4fb3feeafca5bd68"
+fi
+source=(
+  "${_source}"
+)
+b2sums=(
+  "${_sum}"
+)
 
 build() {
-  cd $_name
-  python -m build --wheel --skip-dependency-check --no-isolation
+  ls
+  cd \
+    "${_Pkg}-${pkgver}"
+  "${_py}" \
+    -m \
+      build \
+    --wheel \
+    --skip-dependency-check \
+    --no-isolation
 }
 
 check() {
-  cd $_name
-  python -m venv --system-site-packages test-env
-  test-env/bin/python -m installer dist/*.whl
-  test-env/bin/python -m pytest -v -k 'not test_not_owner'
+  cd \
+    "${_Pkg}-${pkgver}"
+  "${_py}" \
+    -m \
+      venv \
+    --system-site-packages \
+    test-env
+  test-env/bin/python \
+    -m \
+      installer \
+    dist/*.whl
+  test-env/bin/python \
+    -m \
+      pytest \
+    -v \
+    -k \
+      'not test_not_owner'
 }
 
 package() {
-  cd $_name
-  python -m installer --destdir="$pkgdir" dist/*.whl
-
+  local \
+    site_packages
+  cd \
+    "${_Pkg}-${pkgver}"
+  "${_py}" \
+    -m \
+      installer \
+    --destdir="${pkgdir}" \
+    dist/*.whl
   # Symlink license file
-  local site_packages=$(python -c "import site; print(site.getsitepackages()[0])")
-  install -d "$pkgdir"/usr/share/licenses/$pkgname
-  ln -s "$site_packages"/$_name-$pkgver.dist-info/LICENSE \
-    "$pkgdir"/usr/share/licenses/$pkgname/LICENSE
+  site_packages="$( \
+    "${_py}" \
+      -c \
+        "import site; print(site.getsitepackages()[0])")"
+  install \
+    -d \
+    "${pkgdir}/usr/share/licenses/${pkgname}"
+  ln \
+    -s \
+    "${site_packages}/${_pkg}-${pkgver}.dist-info/LICENSE" \
+    "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 }
