@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: AGPL-3.0
+#
+# Maintainer: Pellegrino Prevete <pellegrinoprevete@gmail.com>
+# Maintainer: Truocolo <truocolo@aol.com>
 # Maintainer: Felix Yan <felixonmars@archlinux.org>
 # Maintainer: Daniel M. Capella <polyzen@archlinux.org>
 # Contributor: Hugo Osvaldo Barrera <hugo@barrera.io>
@@ -12,6 +16,9 @@ _pyver="$( \
     awk \
       '{print $2}')"
 _pymajver="${_pyver%.*}"
+_pyminver="${_pymajver#*.}"
+_pynextver="${_pymajver%.*}.$(( \
+  ${_pyminver} + 1))"
 pkgname="${_py}-${_pkg}"
 pkgver=8.1.0
 pkgrel=1
@@ -27,6 +34,7 @@ license=(
 )
 depends=(
   "${_py}>=${_pymajver}"
+  "${_py}<${_pynextver}"
   "${_py}-packaging"
   "${_py}-setuptools"
   "${_py}-typing_extensions"
@@ -116,3 +124,4 @@ package() {
     "${site_packages}/${_pkg}-${pkgver}.dist-info/LICENSE" \
     "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
 }
+
