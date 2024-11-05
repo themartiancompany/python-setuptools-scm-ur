@@ -7,8 +7,8 @@
 # Contributor: Hugo Osvaldo Barrera <hugo@barrera.io>
 
 _git=false
-_pkg=setuptools_scm
-_Pkg=setuptools-scm
+_pkg=setuptools-scm
+# _Pkg=setuptools-scm
 _py="python"
 _pyver="$( \
   "${_py}" \
@@ -37,12 +37,13 @@ depends=(
   "${_py}<${_pynextver}"
   "${_py}-packaging"
   "${_py}-setuptools"
-  "${_py}-typing_extensions"
+  "${_py}-typing-extensions"
 )
 makedepends=(
   "${_py}-build"
   "${_py}-installer"
   "${_py}-wheel"
+  "${_py}-pyproject-hooks>=1.2.1"
 )
 [[ "${_git}" == true ]] && \
   makedepends+=(
@@ -70,9 +71,8 @@ b2sums=(
 )
 
 build() {
-  ls
   cd \
-    "${_Pkg}-${pkgver}"
+    "${_pkg}-${pkgver}"
   "${_py}" \
     -m \
       build \
@@ -83,7 +83,7 @@ build() {
 
 check() {
   cd \
-    "${_Pkg}-${pkgver}"
+    "${_pkg}-${pkgver}"
   "${_py}" \
     -m \
       venv \
@@ -105,7 +105,7 @@ package() {
   local \
     site_packages
   cd \
-    "${_Pkg}-${pkgver}"
+    "${_pkg}-${pkgver}"
   "${_py}" \
     -m \
       installer \

@@ -1,8 +1,8 @@
-pkgbase = python-setuptools_scm
+pkgbase = python-setuptools-scm
 	pkgdesc = Handles managing your python package versions in scm metadata
 	pkgver = 8.1.0
 	pkgrel = 1
-	url = https://github.com/pypa/setuptools_scm
+	url = https://github.com/pypa/setuptools-scm
 	arch = any
 	license = MIT
 	checkdepends = mercurial
@@ -12,12 +12,13 @@ pkgbase = python-setuptools_scm
 	makedepends = python-build
 	makedepends = python-installer
 	makedepends = python-wheel
+	makedepends = python-pyproject-hooks>=1.2.1
 	depends = python>=3.12
 	depends = python<3.13
 	depends = python-packaging
 	depends = python-setuptools
-	depends = python-typing_extensions
-	source = setuptools_scm-8.1.0.tar.gz::https://github.com/pypa/setuptools_scm/archive/refs/tags/v8.1.0.tar.gz
+	depends = python-typing-extensions
+	source = setuptools-scm-8.1.0.tar.gz::https://github.com/pypa/setuptools-scm/archive/refs/tags/v8.1.0.tar.gz
 	b2sums = ec9b751aa65db429a22bfae64a66e3419afe092c88801104f04e4dfdc76c9de255262006b33d4f4af29790b7e0dc5f335b1e551bf35f5adf4fb3feeafca5bd68
 
-pkgname = python-setuptools_scm
+pkgname = python-setuptools-scm
